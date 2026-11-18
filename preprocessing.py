@@ -1,221 +1,349 @@
-import numpy as np 
-import pandas as pd 
-from sklearn.preprocessing import (
-    LabelEncoder,
-    OneHotEncoder,
-    standardScaler,
-    Minmaxscaler,
-    robustscaler,
-)
+import pandas as pd
+import numpy as np
 
-#missing value handle 
-def fill_missing (df,colum,mathod="mean",value=None):
-    """fill missing value in a column 
-    method:
-    mean 
-    median 
-    constant
-    mode
-    """
-df=df.copy()
-if column not in df.columns:
-    return df
-if method =="mean":
-    if pd.api.types.is _numeric_dtyope(df[column]):
-        df[column]=df[column].fillna(df[column].mean())
-        elif method == "median":
-            if pd.api.types.is_numeric _dtype(df[column]):
-                df[column]=df[column].fillna(df[column].median())
-                elif method == "mode":
-                    mode = df[column].mode ()
-                    if len(mode)> 0:
-                        df [column] = df[column].fillna(made[0])
-                        elif method == "constant":
-                            df[column] = df[column].fillna(value)
-                            return df 
+git
+# =====================================================
+# BASIC INFORMATION
+# =====================================================
 
-# remove rows
-def remove_missing_rows(df):
-    df = df.copy() 
-    return df.dropna()
+def dataset_shape(df):
+    """Return dataset shape"""
+    return df.shape
 
-    #remove column 
-    def remove_missing_columns(df):
-        df = df.copy() 
-        return df.dropna(axis = 1) 
 
-        # drop seledted columns
-        def drop_columns(df,columns): 
-            df = df.copy() 
-            return df.drop(columns=columns)
+def get_columns(df):
+    """Return all column names"""
+    return list(df.columns)
 
-            #remove duplicates 
-            def remove_duplicates(df):
-                df = df.copy()
-                return df.drop_duplicates() 
 
-                #rename columns
-                def rename_column(df,old_name.need_name):
-                    df =df.copy()
-                    if old_name not in df.columns:
-                        return df
-                        return df .rename(
-                            columns = {
-                                old_name:new_name
-                            }
-                        ) 
+def data_types(df):
+    """Return datatype of every column"""
+    return pd.DataFrame({
+        "Column": df.columns,
+        "Datatype": df.dtypes.astype(str)
+    })
 
-# change datatypes 
-def convert_datatype(df,column,datatype):
-    df = df.copy() 
-    try:
-        if datatype == "int":
-            df[column] = df[column].astype(int)
-            elif datatype =="float":
-                df[column] = df[column].astype(float)
-            elif datatype == "str":
-                df[column] = df[column].astype(str) 
-            elif datatype == "bool":
-                df[column]= df[column].astype(bool)
-            elif datatype == "datatime":
-                df [column] = pd.to_datatime(df[column])
-                except Exception:
-                    pass
-                    return df 
 
-                    # replace values 
-                    def replace_values(df, column, old_value, new_value):
-                        df = df.copy()
-                        df[column] =df[column].replace(old_value,new_value)
-                        return df
+def memory_usage(df):
+    """Memory usage in MB"""
+    memory = df.memory_usage(deep=True).sum() / (1024 * 1024)
+    return round(memory, 2)
 
-#remove negative values 
-def remove_negative_values(df,column):
-    df = df.copy()
-    if pd.api.types.is_numeric_dtype(df[column]):
-        df = df[df[column]>=0]
-        return df 
 
-        # remove empty string 
-        def remove_empty_strings(df):
-            df = df.copy()
-            df.replace("",np.nan,inplace = True)
-            return df 
+def missing_values(df):
+    """Missing value summary"""
 
-            # trim spaces 
-            def trim_spaces(df):
-                df = df.copy()
-                for col in df.select_dtpyes(include = "object"):
-                    df[col] = df[col].str.strip()
-                    return df 
+    missing = df.isnull().sum()
 
-                    #lowecase text 
-                    def lowecase_columns(df):
-                        df = df.copy()
-                        object_cols = df.select_dtype(include = "object").columns
-                        for col in object_cols:
-                            df[col] = df[col].str.lower()
-                            return df                         
-#uppercase text 
-def uppercase_columns(df):
-    object_cols = df.select_dtype(include = "object").columns
-    for col in object_cols:
-        df[col] = df[col].str.upper()
-        return df
+    percent = (missing / len(df)) * 100
 
-# title case function
-        def title_case_columns(df):
-            df = df.copy()
-            object_cols = df.select_dtypes(include="object").columns
-            for col in object_cols:
-                df[col] = df[col].str.title()
-                return df 
+    result = pd.DataFrame({
 
-               
- # reset indexes
-                def reset_index(df):
-                    return df.reset_index(drop = True)
+        "Missing Values": missing,
+        "Percentage (%)": percent.round(2)
 
-# sort values 
-def sort_dataframe(df,column,ascending = True):
-    return df.sort_values(
-        by = column,
-        ascending=ascending
+    })
+
+    return result.sort_values(
+        by="Missing Values",
+        ascending=False
     )
 
-    #filter rows
-    def filter_rows(df,colum,value):
-        return df[df[column] == value]
-        
-        # LABEL encoder 
-        def label_encoder(df,columns):
-            df = df.copy()
-            encoder = LabelEncoder()
-            for col in columns
-            if col in df.columns:
-                df[col] = encoder.fit_transform(
-                    df[col].astype(str)
-                )
-            return df
 
-            # one hot encoder
-            def one_hot_encoder(df,columns):
-                df = df.copy()
-                df = pd.get_dummies(
-                    df,
-                    columns=columns
-                    drop_first=False
-                )    
-                return df
-
-                #standard scalar 
-                def standar_scale(df, columns):
-                    df = df.copy()
-                    scaler = standardScaler()
-                    df[columns] = scaler.fit_transform(df[columns])
-                    return df
-
-                    # minmax scalar 
-                    def minmax_scale(df, columns):
-                    df = df.copy()
-                    scaler = Minmaxscaler()
-                    df[columns] = scaler.fit_transform(df[columns])
-                    return df
-
-                    # robust scalar
-                     def standar_scale(df, columns):
-                    df = df.copy()
-                    scaler = robustScaler()
-                    df[columns] = scaler.fit_transform(df[columns])
-                    return df
-
-                    # fill all numeric 
-                    def fill_all_numeric(df)
-                    df = df.copy()
-                    numeric = df.select_dtpyes(include=np.number).columns
-                    for col in numeric:
-                        df [col] = df[col.fillna(df[col].mean())]
-                        return df
-
-                     # fill all categories:
-                        def fill_all_categorical(df):
-                            categorical = df.select_dtpyes(include = ["object","category"]).columns
-                            for col in categorical:
-                                mode = df[col].mode()
-                                if len(mode) > 0:
-                                    df[col] = df[col].fillna(mode[0])
-                                    return df
-
-                      # pipeline
-                    def preprocess_datasrt(df):
-                    df = remove_duplicates(df)
-                    df = remove_empty_strings(df)
-                    df = fill all numerical(df)
-                    df = fill all categorical(df)
-                    df = reset_index(df)
-                    return df
-             
-                    
+def duplicate_rows(df):
+    """Duplicate rows count"""
+    return int(df.duplicated().sum())
 
 
+# =====================================================
+# DATASET SUMMARY
+# =====================================================
 
+def describe_dataset(df):
+    """Pandas describe"""
+    return df.describe(include="all").T
+
+
+# =====================================================
+# NUMERIC SUMMARY
+# =====================================================
+
+def numeric_summary(df):
+
+    numeric = df.select_dtypes(include=np.number)
+
+    if numeric.empty:
+        return pd.DataFrame()
+
+    summary = pd.DataFrame(index=numeric.columns)
+
+    summary["Count"] = numeric.count()
+    summary["Mean"] = numeric.mean()
+    summary["Median"] = numeric.median()
+    summary["Mode"] = numeric.mode().iloc[0]
+    summary["Min"] = numeric.min()
+    summary["Max"] = numeric.max()
+
+    summary["Variance"] = numeric.var()
+
+    summary["Std Dev"] = numeric.std()
+
+    summary["Skewness"] = numeric.skew()
+
+    summary["Kurtosis"] = numeric.kurt()
+
+    summary["Unique"] = numeric.nunique()
+
+    return summary.round(3)
+
+
+# =====================================================
+# CATEGORICAL SUMMARY
+# =====================================================
+
+def categorical_summary(df):
+
+    categorical = df.select_dtypes(
+        include=["object", "category", "bool"]
+    )
+
+    if categorical.empty:
+        return pd.DataFrame()
+
+    summary = pd.DataFrame(index=categorical.columns)
+
+    summary["Unique"] = categorical.nunique()
+
+    summary["Most Frequent"] = categorical.mode().iloc[0]
+
+    summary["Frequency"] = categorical.apply(
+        lambda x: x.value_counts().iloc[0]
+    )
+
+    summary["Missing"] = categorical.isnull().sum()
+
+    return summary
+
+
+# =====================================================
+# UNIQUE VALUES
+# =====================================================
+
+def unique_values(df):
+
+    result = pd.DataFrame({
+
+        "Column": df.columns,
+        "Unique Values": df.nunique()
+
+    })
+
+    return result
+
+
+# =====================================================
+# NULL PERCENTAGE
+# =====================================================
+
+def null_percentage(df):
+
+    return (df.isnull().mean() * 100).round(2)
+
+
+# =====================================================
+# CORRELATION
+# =====================================================
+
+def pearson_correlation(df):
+
+    numeric = df.select_dtypes(include=np.number)
+
+    return numeric.corr(method="pearson")
+
+
+def spearman_correlation(df):
+
+    numeric = df.select_dtypes(include=np.number)
+
+    return numeric.corr(method="spearman")
+
+
+# =====================================================
+# COLUMN INFORMATION
+# =====================================================
+
+def column_information(df):
+
+    info = pd.DataFrame(index=df.columns)
+
+    info["Datatype"] = df.dtypes.astype(str)
+
+    info["Missing"] = df.isnull().sum()
+
+    info["Unique"] = df.nunique()
+
+    info["Non Null"] = df.count()
+
+    return info
+
+
+# =====================================================
+# OVERVIEW METRICS
+# =====================================================
+
+def overview(df):
+
+    overview = {
+
+        "Rows": df.shape[0],
+
+        "Columns": df.shape[1],
+
+        "Total Cells": df.shape[0] * df.shape[1],
+
+        "Missing Cells": int(df.isnull().sum().sum()),
+
+        "Duplicate Rows": int(df.duplicated().sum()),
+
+        "Memory Usage (MB)": round(
+            df.memory_usage(deep=True).sum() / (1024 * 1024),
+            2
+        )
+
+    }
+
+    return overview
+
+
+# =====================================================
+# DATA QUALITY REPORT
+# =====================================================
+
+def data_quality(df):
+
+    quality = pd.DataFrame(index=df.columns)
+
+    quality["Datatype"] = df.dtypes.astype(str)
+
+    quality["Missing"] = df.isnull().sum()
+
+    quality["Missing %"] = (
+        df.isnull().mean() * 100
+    ).round(2)
+
+    quality["Unique"] = df.nunique()
+
+    quality["Duplicates"] = df.duplicated().sum()
+
+    return quality
+
+
+# =====================================================
+# NUMERIC COLUMN LIST
+# =====================================================
+
+def numeric_columns(df):
+
+    return df.select_dtypes(include=np.number).columns.tolist()
+
+
+# =====================================================
+# CATEGORICAL COLUMN LIST
+# =====================================================
+
+def categorical_columns(df):
+
+    return df.select_dtypes(
+        include=["object", "category", "bool"]
+    ).columns.tolist()
+
+
+# =====================================================
+# DATETIME COLUMN LIST
+# =====================================================
+
+def datetime_columns(df):
+
+    return df.select_dtypes(
+        include=["datetime64"]
+    ).columns.tolist()
+
+
+# =====================================================
+# VALUE COUNTS
+# =====================================================
+
+def value_counts(df, column):
+
+    return df[column].value_counts().reset_index().rename(
+
+        columns={
+            "index": column,
+            column: "Count"
+        }
+
+    )
+
+
+# =====================================================
+# SAMPLE DATA
+# =====================================================
+
+def head(df, n=5):
+
+    return df.head(n)
+
+
+def tail(df, n=5):
+
+    return df.tail(n)
+
+
+def random_sample(df, n=5):
+
+    return df.sample(min(n, len(df)))
+
+
+# =====================================================
+# DESCRIBE SINGLE COLUMN
+# =====================================================
+
+def column_statistics(df, column):
+
+    series = df[column]
+
+    result = {
+
+        "Count": series.count(),
+
+        "Missing": series.isnull().sum(),
+
+        "Unique": series.nunique()
+
+    }
+
+    if pd.api.types.is_numeric_dtype(series):
+
+        result.update({
+
+            "Mean": series.mean(),
+
+            "Median": series.median(),
+
+            "Mode": series.mode().iloc[0],
+
+            "Variance": series.var(),
+
+            "Std": series.std(),
+
+            "Min": series.min(),
+
+            "Max": series.max(),
+
+            "Skewness": series.skew(),
+
+            "Kurtosis": series.kurt()
+
+        })
+
+    return result
